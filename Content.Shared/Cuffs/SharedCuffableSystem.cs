@@ -632,6 +632,9 @@ namespace Content.Shared.Cuffs
 
                 if (!_delay.TryResetDelay((cuffsToRemove.Value, useDelay), true))
                 {
+                    _popup.PopupClient(Loc.GetString("cuffable-component-cooldown"),
+                        user,
+                        user);
                     return;
                 }
             }

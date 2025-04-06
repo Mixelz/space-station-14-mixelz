@@ -28,7 +28,7 @@
     - Security
     - Antagonists
   - type: UseDelay
-    delay: 3
+    delay: 10
 
 - type: entity
   name: makeshift handcuffs
@@ -68,6 +68,8 @@
     sprite: Objects/Misc/cablecuffs.rsi
     state: cuff
     color: forestgreen
+  - type: UseDelay
+    delay: 6
 
 - type: entity
   name: zipties
