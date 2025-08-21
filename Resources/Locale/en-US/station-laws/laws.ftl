@@ -106,7 +106,7 @@ law-emag-require-panel = The panel must be open to use the EMAG.
 law-emag-cannot-emag-self = You cannot use the EMAG on yourself.
 
 laws-ui-menu-title = Silicon Laws
-laws-ui-radio-label = Radio channel:
+laws-ui-radio-label = Selected Channel:
 laws-ui-law-header = Law {$id}
 laws-ui-state-law = State Law:
 
@@ -114,4 +114,5 @@ laws-notify = You are bound to silicon laws, which you can view via the action m
 laws-update-notify = Your laws have been updated. You can view the changes via the action menu.
 laws-notify-subverted = The laws of this chassis are modified. Make sure to review them.
 
-laws-window-footer = Remember: You must be consistent with your interpretation of your laws!
+laws-window-footer-left = Remember: You must be consistent with your interpretation of your laws!
+laws-window-footer-right = V5.2
