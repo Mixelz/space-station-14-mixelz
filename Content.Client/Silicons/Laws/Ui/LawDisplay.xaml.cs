@@ -63,7 +63,7 @@ public sealed partial class LawDisplay : Control
 
         RadioChatButton.OnPressed += _ =>
         {
-            OnRadioChannelButtonPressed(lawDescriptionPlaintext, lawDescriptionPlaintext);
+            OnRadioChannelButtonPressed(lawIdentifierPlaintext, lawDescriptionPlaintext);
         };
     }
 
