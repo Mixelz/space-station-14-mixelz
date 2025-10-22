@@ -10,7 +10,7 @@
             <customControls:HSeparator Margin="0 5 0 5"/>
             <RichTextLabel Name="LawLabel"/>
             <BoxContainer Orientation="Horizontal" HorizontalExpand="True">
-                <Label Text="{Loc laws-ui-state-law}" StyleClasses="StatusFieldTitle"/>
+                <Label Text="{Loc laws-ui-state-law}" StyleClasses="highlight"/>
                 <BoxContainer Name="LawAnnouncementButtons" Orientation="Horizontal" HorizontalExpand="True" Margin="0 5 0 0">
                     <Control Margin="5 0 0 0" />
                     <Button
