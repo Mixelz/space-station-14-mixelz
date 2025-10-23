@@ -47,13 +47,15 @@
     </BoxContainer>
     <BoxContainer
         Orientation="Horizontal"
-        HorizontalAlignment="Left"
         Margin="5 10 5 10">
         <CheckBox
             Name="Corrupted"
             Text="{Loc silicon-law-ui-check-corrupted}"
             ToolTip="{Loc silicon-law-ui-check-corrupted-tooltip}">
         </CheckBox>
+        <BoxContainer
+            HorizontalExpand="True"> <!--> This is here just to seperate the two buttons on the UI. I hate this. <!-->
+        </BoxContainer>
         <Button
             Name="Delete"
             Text="{Loc silicon-law-ui-delete}"
