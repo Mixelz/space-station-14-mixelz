@@ -106,7 +106,7 @@ public sealed class SiliconLawSystem : SharedSiliconLawSystem
         TryComp(uid, out IntrinsicRadioTransmitterComponent? intrinsicRadio);
         var radioChannels = intrinsicRadio?.Channels;
 
-        var state = new SiliconLawBuiState(GetLaws(uid).Laws, radioChannels);
+        var state = new SiliconLawBuiState(GetLaws(uid).Laws, radioChannels, component.Version);
         _userInterface.SetUiState(args.Entity, SiliconLawsUiKey.Key, state);
     }
 
@@ -145,6 +145,7 @@ public sealed class SiliconLawSystem : SharedSiliconLawSystem
             if (_mind.TryGetMind(uid, out var mindId, out _))
                 EnsureSubvertedSiliconRole(mindId);
 
+            UpdateLawVersion(uid);
         }
     }
 
@@ -169,6 +170,8 @@ public sealed class SiliconLawSystem : SharedSiliconLawSystem
             LawString = Loc.GetString("law-emag-secrecy", ("faction", Loc.GetString(component.Lawset.ObeysTo))),
             Order = component.Lawset.Laws.Max(law => law.Order) + 1
         });
+
+        UpdateLawVersion(uid);
     }
 
     protected override void EnsureSubvertedSiliconRole(EntityUid mindId)
@@ -289,6 +292,7 @@ public sealed class SiliconLawSystem : SharedSiliconLawSystem
 
         component.Lawset.Laws = newLaws;
         NotifyLawsChanged(target, cue);
+        UpdateLawVersion(target);
     }
 
     protected override void OnUpdaterInsert(Entity<SiliconLawUpdaterComponent> ent, ref EntInsertedIntoContainerMessage args)
@@ -305,6 +309,18 @@ public sealed class SiliconLawSystem : SharedSiliconLawSystem
         {
             SetLaws(lawset.Laws, update, provider.LawUploadSound);
         }
+    }
+
+    /// <summary>
+    /// Updates the version on a target SiliconLawBoundComponent. This is used in the law UI as flair to show the
+    /// number of updates a silicon player's laws has had
+    /// </summary>
+    private void UpdateLawVersion(Entity<SiliconLawBoundComponent?> target)
+    {
+        if (!Resolve(target, ref target.Comp))
+            return;
+
+        target.Comp.Version++;
     }
 }
 
