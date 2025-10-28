@@ -12,7 +12,8 @@
         <BoxContainer
             Orientation="Horizontal"
             HorizontalExpand="True"
-            HorizontalAlignment="Center">
+            HorizontalAlignment="Center"
+            Margin="0 5 0 5">
             <Label
                 Text="{Loc laws-ui-radio-label}"
                 StyleClasses="StatusFieldTitle"/>
@@ -23,7 +24,7 @@
         </BoxContainer>
         <PanelContainer
             VerticalExpand="True"
-            Margin="10 5 10 10">
+            Margin="10 0 10 0">
             <PanelContainer.PanelOverride>
                 <gfx:StyleBoxFlat BackgroundColor="#1B1B1E"/>
             </PanelContainer.PanelOverride>
