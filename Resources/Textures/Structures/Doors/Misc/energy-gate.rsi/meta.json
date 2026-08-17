@@ -16,7 +16,15 @@
             "directions": 4
         },
         {
+            "name": "airtight",
+            "directions": 4
+        },
+        {
             "name": "direction",
+            "directions": 4
+        },
+        {
+            "name": "direction-airtight",
             "directions": 4
         },
         {

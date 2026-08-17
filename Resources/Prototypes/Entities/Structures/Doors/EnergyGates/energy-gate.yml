@@ -1,8 +1,8 @@
 - type: entity
   parent: [ BaseStructure, StructureHealthDoor ]
-  id: EnergyGate
-  name: energy gate
-  description: An advanced gate that permits one-way access and prevents tailgating.
+  id: MetalTurnstile
+  name: metal turnstile
+  description: A simple turnstile that only permits one-way access, despite being easily bypassed.
   components:
   - type: Sprite
     sprite: Structures/Doors/Misc/energy-gate.rsi
@@ -20,6 +20,85 @@
       enum.TurnstileVisualLayers.Base:
         barrier:
           Idle: { state: idle-security }
+          Spin: { state: operate }
+          Deny: { state: deny }
+  - type: AnimationPlayer
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.49,-0.49,0.49,0.49" #objects can be thrown over this
+        density: 55
+        mask:
+        - MachineMask
+        layer:
+        - MachineLayer
+      fix2:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.50,-0.50,0.50,0.50"
+        hard: false
+        mask:
+        - MachineMask
+        layer:
+        - MachineLayer
+  - type: MeleeSound
+    soundGroups:
+      Brute:
+        path:
+          "/Audio/Weapons/smash.ogg"
+  - type: InteractionOutline
+  - type: Turnstile
+    processWhitelist:
+      components:
+      - MobState # no mobs
+      - Pullable # no dragging things in
+  - type: Damageable
+    damageModifierSet: SteelMod
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 100
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: MetalBreak
+  - type: Construction
+    graph: MetalTurnstile
+    node: metalTurnstile
+  - type: DirectionalArrowIndicator
+  - type: Climbable
+    delay: 0.5 # Insert Gif of people vaulting subway turnstiles
+  - type: Bonkable
+    bonkDamage:
+      types:
+        Blunt: 4
+
+# Powered Variant
+- type: entity
+  parent: [ BaseStructure, StructureHealthDoor ]
+  id: EnergyGate
+  name: energy gate
+  description: An advanced gate that permits one-way access and prevents tailgating.
+  components:
+  - type: Sprite
+    sprite: Structures/Doors/Misc/energy-gate.rsi
+    drawdepth: Doors
+    layers:
+    - state: regular
+    - state: idle
+      shader: unshaded
+      map: [ "barrier" ]
+    - state: direction
+      shader: unshaded
+  - type: Appearance
+  - type: GenericVisualizer
+    visuals:
+      enum.TurnstileVisualLayers.Base:
+        barrier:
+          Idle: { state: idle }
           Spin: { state: operate }
           Deny: { state: deny }
   - type: AnimationPlayer
@@ -54,18 +133,25 @@
       components:
       - MobState # no mobs
       - Pullable # no dragging things in
+    turnSound:
+      path: /Audio/Effects/gateway_off.ogg
+      params:
+        variation: 0.02
+        volume: -9
   - type: Damageable
-    damageModifierSet: SteelMod
+    damageModifierSet: StrongMetallic
   - type: Destructible
     thresholds:
     - trigger:
         !type:DamageTrigger
-        damage: 200
+        damage: 250
       behaviors:
       - !type:PlaySoundBehavior
         sound:
           collection: MetalBreak
   - type: AccessReader
+  - type: ApcPowerReceiver
+    powerLoad: 20
   - type: Construction
     graph: EnergyGate
     node: energyGate
@@ -80,12 +166,29 @@
   - type: PlacementReplacement
     key: walls
 
-# Genpop
+# Genpop Variants
 - type: entity
   id: EnergyGateGenpopEnter
   parent: EnergyGate
   suffix: Genpop Enter
   components:
+  - type: Sprite
+    sprite: Structures/Doors/Misc/energy-gate.rsi
+    drawdepth: Doors
+    layers:
+    - state: security
+    - state: idle-security
+      shader: unshaded
+      map: [ "barrier" ]
+    - state: direction
+      shader: unshaded
+  - type: GenericVisualizer
+    visuals:
+      enum.TurnstileVisualLayers.Base:
+        barrier:
+          Idle: { state: idle-security }
+          Spin: { state: operate }
+          Deny: { state: deny }
   - type: AccessReader
     access: [["GenpopEnter"], ["Security"]]
 
@@ -94,6 +197,23 @@
   parent: EnergyGate
   suffix: Genpop Leave
   components:
+  - type: Sprite
+    sprite: Structures/Doors/Misc/energy-gate.rsi
+    drawdepth: Doors
+    layers:
+    - state: security
+    - state: idle-security
+      shader: unshaded
+      map: [ "barrier" ]
+    - state: direction
+      shader: unshaded
+  - type: GenericVisualizer
+    visuals:
+      enum.TurnstileVisualLayers.Base:
+        barrier:
+          Idle: { state: idle-security }
+          Spin: { state: operate }
+          Deny: { state: deny }
   - type: AccessReader
     access: [["GenpopLeave"], ["Security"]]
 
@@ -107,13 +227,15 @@
   - type: Airtight
   - type: RadiationBlocker
     resistance: 4
+  - type: ApcPowerReceiver
+    powerLoad: 0 # Requires so power so Arrivals doesn't self space during blackouts.
   - type: Sprite
     layers:
-    - state: regular
+    - state: airtight
     - state: idle
       shader: unshaded
       map: [ "barrier" ]
-    - state: direction
+    - state: direction-airtight
       shader: unshaded
   - type: GenericVisualizer
     visuals:

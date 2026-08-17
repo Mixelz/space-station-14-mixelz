@@ -1,4 +1,37 @@
 - type: constructionGraph
+  id: MetalTurnstile
+  start: start
+  graph:
+  - node: start
+    actions:
+    - !type:DeleteEntity { }
+    edges:
+    - to: metalTurnstile
+      completed:
+      - !type:SnapToGrid
+      steps:
+      - material: MetalRod
+        amount: 4
+      - material: Silver
+        amount: 5
+        doAfter: 6
+
+  - node: metalTurnstile
+    entity: MetalTurnstile
+    edges:
+    - to: start
+      completed:
+      - !type:SpawnPrototype
+        prototype: PartRodMetal1
+        amount: 4
+      - !type:DeleteEntity
+      steps:
+      - tool: Welding
+        doAfter: 4.0
+      - tool: Cutting
+        doAfter: 2.0
+
+- type: constructionGraph
   id: EnergyGate
   start: start
   graph:
@@ -12,8 +45,8 @@
       steps:
       - material: MetalRod
         amount: 4
-      - material: Steel
-        amount: 1
+      - material: Silver
+        amount: 5
         doAfter: 6
 
   - node: energyGate
