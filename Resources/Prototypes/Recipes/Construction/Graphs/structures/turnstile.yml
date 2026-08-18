@@ -11,10 +11,10 @@
       - !type:SnapToGrid
       steps:
       - material: MetalRod
-        amount: 4
-      - material: Silver
-        amount: 5
-        doAfter: 6
+        amount: 6
+      - material: Steel
+        amount: 2
+        doAfter: 8
 
   - node: metalTurnstile
     entity: MetalTurnstile

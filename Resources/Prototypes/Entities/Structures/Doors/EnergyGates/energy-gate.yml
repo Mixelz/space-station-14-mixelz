@@ -172,6 +172,13 @@
         sound:
           collection: MetalBreak
   - type: AccessReader
+    containerAccessProvider: board
+  - type: ContainerContainer
+    containers:
+      board: !type:Container
+  - type: ContainerFill
+    containers:
+      board: [ DoorElectronics ]
   - type: Construction
     graph: EnergyGate
     node: energyGate
@@ -216,8 +223,9 @@
         enum.PowerDeviceVisualLayers.Powered:
           True: { visible: true }
           False: { visible: false }
-  - type: AccessReader
-    access: [["GenpopEnter"], ["Security"]]
+  - type: ContainerFill
+    containers:
+      board: [ DoorElectronicsGenpopEnter ]
 
 - type: entity
   id: EnergyGateGenpopLeave
@@ -247,8 +255,9 @@
         enum.PowerDeviceVisualLayers.Powered:
           True: { visible: true }
           False: { visible: false }
-  - type: AccessReader
-    access: [["GenpopLeave"], ["Security"]]
+  - type: ContainerFill
+    containers:
+      board: [ DoorElectronicsGenpopLeave ]
 
 # Airtight
 - type: entity
