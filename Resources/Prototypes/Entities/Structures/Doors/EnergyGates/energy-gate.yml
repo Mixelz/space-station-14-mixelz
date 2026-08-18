@@ -6,7 +6,7 @@
   components:
   - type: Sprite
     sprite: Structures/Doors/Misc/energy-gate.rsi
-    drawdepth: Doors
+    drawdepth: Objects
     layers:
     - state: security
     - state: idle-security
@@ -90,7 +90,7 @@
     - state: regular
     - state: idle
       shader: unshaded
-      map: [ "barrier" ]
+      map: [ "barrier", "enum.PowerDeviceVisualLayers.Powered" ]
     - state: direction
       shader: unshaded
   - type: Appearance
@@ -101,7 +101,29 @@
           Idle: { state: idle }
           Spin: { state: operate }
           Deny: { state: deny }
+      enum.PowerDeviceVisuals.Powered:
+        enum.PowerDeviceVisualLayers.Powered:
+          True: { visible: true }
+          False: { visible: false }
   - type: AnimationPlayer
+  - type: ExaminableBattery
+  - type: ApcPowerReceiver
+    powerLoad: 60 # x3 rate of a door, because it is literally made of energy
+  - type: ExtensionCableReceiver
+  - type: LightningTarget
+    priority: 1
+  - type: Battery
+    # Very important:
+    # Disable networking to prevent the battery getting continuously dirtied every tick as it interacts with the power network.
+    # This can not be done by changing the charge rate as the power supply ramps up over time.
+    # This disables prediction for this battery.
+    netsync: false
+    maxCharge: 6240 # 104 seconds to fully drain, longer than the longest possible blackout.
+    startingCharge: 3120 # Starts 50% full, meaning its more power hungry at shift start.
+  - type: ApcPowerReceiverBattery
+    idleLoad: 60
+    batteryRechargeRate: 240
+    batteryRechargeEfficiency: 0.0 # temporarily no power draw because this was causing potentially seizure inducing light flickering
   - type: Fixtures
     fixtures:
       fix1:
@@ -150,8 +172,6 @@
         sound:
           collection: MetalBreak
   - type: AccessReader
-  - type: ApcPowerReceiver
-    powerLoad: 20
   - type: Construction
     graph: EnergyGate
     node: energyGate
@@ -159,6 +179,7 @@
   - type: IconSmooth
     key: walls
     mode: NoSprite
+  - type: LitOnPowered
   - type: PointLight
     energy: 2.2
     color: "#cc3a41"
@@ -169,6 +190,8 @@
 # Genpop Variants
 - type: entity
   id: EnergyGateGenpopEnter
+  name: genpop energy gate
+  description: An advanced gate that permits one-way access and prevents tailgating. A tider's hated enemy.
   parent: EnergyGate
   suffix: Genpop Enter
   components:
@@ -179,7 +202,7 @@
     - state: security
     - state: idle-security
       shader: unshaded
-      map: [ "barrier" ]
+      map: [ "barrier", "enum.PowerDeviceVisualLayers.Powered" ]
     - state: direction
       shader: unshaded
   - type: GenericVisualizer
@@ -189,11 +212,17 @@
           Idle: { state: idle-security }
           Spin: { state: operate }
           Deny: { state: deny }
+      enum.PowerDeviceVisuals.Powered:
+        enum.PowerDeviceVisualLayers.Powered:
+          True: { visible: true }
+          False: { visible: false }
   - type: AccessReader
     access: [["GenpopEnter"], ["Security"]]
 
 - type: entity
   id: EnergyGateGenpopLeave
+  name: genpop energy gate
+  description: An advanced gate that permits one-way access and prevents tailgating. A tider's hated enemy.
   parent: EnergyGate
   suffix: Genpop Leave
   components:
@@ -204,7 +233,7 @@
     - state: security
     - state: idle-security
       shader: unshaded
-      map: [ "barrier" ]
+      map: [ "barrier", "enum.PowerDeviceVisualLayers.Powered" ]
     - state: direction
       shader: unshaded
   - type: GenericVisualizer
@@ -214,6 +243,10 @@
           Idle: { state: idle-security }
           Spin: { state: operate }
           Deny: { state: deny }
+      enum.PowerDeviceVisuals.Powered:
+        enum.PowerDeviceVisualLayers.Powered:
+          True: { visible: true }
+          False: { visible: false }
   - type: AccessReader
     access: [["GenpopLeave"], ["Security"]]
 
@@ -221,14 +254,15 @@
 - type: entity
   parent: EnergyGate
   id: EnergyGateAirtight
-  name: airtight energy gate
+  name: arrivals energy gate
+  description: A specalized gate that permits one-way access and prevents tailgating. It's airtight and doesn't require power.
   suffix: Airtight
   components:
   - type: Airtight
   - type: RadiationBlocker
     resistance: 4
   - type: ApcPowerReceiver
-    powerLoad: 0 # Requires so power so Arrivals doesn't self space during blackouts.
+    needsPower: false # Required for multiple reasons, no arrivals shuttle, no easy exit from the station.
   - type: Sprite
     layers:
     - state: airtight
@@ -237,13 +271,6 @@
       map: [ "barrier" ]
     - state: direction-airtight
       shader: unshaded
-  - type: GenericVisualizer
-    visuals:
-      enum.TurnstileVisualLayers.Base:
-        barrier:
-          Idle: { state: idle }
-          Spin: { state: operate }
-          Deny: { state: deny }
   - type: PointLight
     energy: 2.2
     color: "#50abff"

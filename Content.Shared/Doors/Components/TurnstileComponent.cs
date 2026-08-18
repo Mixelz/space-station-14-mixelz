@@ -14,6 +14,9 @@ namespace Content.Shared.Doors.Components;
 [Access(typeof(SharedTurnstileSystem))]
 public sealed partial class TurnstileComponent : Component
 {
+    [DataField, AutoNetworkedField]
+    public bool Powered;
+
     /// <summary>
     /// A whitelist of the things this turnstile can choose to block or let through.
     /// Things not in this whitelist will be ignored by default.
@@ -43,7 +46,7 @@ public sealed partial class TurnstileComponent : Component
     /// Sound to play when the turnstile admits a mob through.
     /// </summary>
     [DataField]
-    public SoundSpecifier? TurnSound = new SoundPathSpecifier("/Audio/Items/ratchet.ogg", AudioParams.Default.WithVolume(-10));
+    public SoundSpecifier? TurnSound = new SoundPathSpecifier("/Audio/Items/ratchet.ogg", AudioParams.Default.WithVolume(-9));
 
     /// <summary>
     /// Sound to play when the turnstile denies entry
