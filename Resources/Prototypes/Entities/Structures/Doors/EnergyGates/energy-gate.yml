@@ -1,5 +1,5 @@
 - type: entity
-  parent: [ BaseStructure, StructureHealthDoor ]
+  parent: BaseStructure
   abstract: true
   id: BaseTurnstile
   components:
@@ -46,10 +46,10 @@
         - GlassAirlockLayer
 
 - type: entity
-  parent: BaseTurnstile
+  parent: [ BaseTurnstile, StructureHealthDoorWeak]
   id: MetalTurnstile
   name: metal turnstile
-  description: A simple turnstile that only permits one-way access, despite being easily bypassed.
+  description: A simple turnstile that only permits one-way access and prevents tailgating, despite being easily bypassed by most people.
   components:
   - type: Sprite
     sprite: Structures/Doors/Misc/energy-gate.rsi
@@ -90,6 +90,14 @@
         !type:DamageTrigger
         damage: 100
       behaviors:
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          SheetSteel1:
+            min: 1
+            max: 3
+          PartRodMetal1:
+            min: 2
+            max: 5
       - !type:PlaySoundBehavior
         sound:
           collection: MetalBreak
@@ -105,7 +113,7 @@
 
 # Powered Variant
 - type: entity
-  parent: BaseTurnstile
+  parent: [ BaseTurnstile, StructureHealthDoor]
   id: EnergyGate
   name: energy gate
   description: An advanced gate that permits one-way access and prevents tailgating.
@@ -162,11 +170,19 @@
     thresholds:
     - trigger:
         !type:DamageTrigger
-        damage: 250
+        damage: 200
       behaviors:
+      - !type:EmptyContainersBehaviour
+        containers:
+          - board
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          SheetSteel1:
+            min: 2
+            max: 6
       - !type:PlaySoundBehavior
         sound:
-          collection: MetalBreak
+          collection: MetalGlassBreak
   - type: Construction
     graph: EnergyGate
     node: energyGate
