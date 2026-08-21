@@ -1,65 +1,168 @@
 - type: constructionGraph
-  id: MetalTurnstile
-  start: start
-  graph:
-  - node: start
-    actions:
-    - !type:DeleteEntity { }
-    edges:
-    - to: metalTurnstile
-      completed:
-      - !type:SnapToGrid
-      steps:
-      - material: MetalRod
-        amount: 6
-      - material: Steel
-        amount: 2
-        doAfter: 8
-
-  - node: metalTurnstile
-    entity: MetalTurnstile
-    edges:
-    - to: start
-      completed:
-      - !type:SpawnPrototype
-        prototype: PartRodMetal1
-        amount: 4
-      - !type:DeleteEntity
-      steps:
-      - tool: Welding
-        doAfter: 4.0
-      - tool: Cutting
-        doAfter: 2.0
-
-- type: constructionGraph
   id: EnergyGate
   start: start
   graph:
   - node: start
+    edges:
+    - to: assembly
+      completed:
+      - !type:SetAnchor
+        value: false
+      steps:
+      - material: Steel
+        amount: 4
+        doAfter: 2
+
+  - node: assembly
+    entity: EnergyGateAssembly
     actions:
-    - !type:DeleteEntity { }
+    - !type:SnapToGrid {}
+    - !type:SetAnchor {}
+    edges:
+    - to: wired
+      conditions:
+      - !type:EntityAnchored {}
+      steps:
+      - material: Cable
+        amount: 5
+        doAfter: 2.5
+    - to: start
+      conditions:
+      - !type:EntityAnchored
+        anchored: false
+      completed:
+      - !type:SpawnPrototype
+        prototype: SheetSteel1
+        amount: 4
+      - !type:DeleteEntity {}
+      steps:
+      - tool: Welding
+        doAfter: 3
+
+  - node: wired
+    edges:
+    - to: batteryin
+      conditions:
+      - !type:EntityAnchored {}
+      steps:
+      - component: PowerCell
+        name: construction-graph-component-power-cell
+        store: battery-container
+        icon:
+          sprite: Objects/Power/power_cells.rsi
+          state: small
+        doAfter: 1
+      - tool: Screwing
+        doAfter: 2.5
+    - to: assembly
+      completed:
+      - !type:SpawnPrototype
+        prototype: CableApcStack1
+        amount: 5
+      steps:
+      - tool: Cutting
+        doAfter: 2.5
+
+  - node: batteryin
+    edges:
+    - to: electronics
+      conditions:
+      - !type:EntityAnchored
+      steps:
+      - component: DoorElectronics
+        store: board
+        name: construction-graph-component-door-electronics-circuit-board
+        icon:
+          sprite: "Objects/Misc/module.rsi"
+          state: "door_electronics"
+        doAfter: 2
+    - to: wired
+      completed:
+      - !type:EmptyContainer
+        containers:
+        - battery-container
+      steps:
+      - tool: Prying
+        doAfter: 3
+
+  - node: electronics
+    edges:
+    - to: liquidfillwelded
+      conditions:
+      - !type:EntityAnchored {}
+      - !type:MinSolution
+        solution: container
+        reagent:
+          ReagentId: Plasma
+        quantity: 10
+      steps:
+      - material: Steel
+        amount: 2
+        doAfter: 2
+      - tool: Welding
+        doAfter: 4
+    - to: batteryin
+      completed:
+      - !type:EmptyContainer
+        containers:
+        - board
+      steps:
+      - tool: Prying
+        doAfter: 5
+
+  - node: liquidfill #DECON STEP
+    edges:
+    - to: liquidfillwelded
+      conditions:
+      - !type:EntityAnchored {}
+      - !type:MinSolution
+        solution: container
+        reagent:
+          ReagentId: Plasma
+        quantity: 10
+      steps:
+      - material: Steel
+        amount: 2
+        doAfter: 2
+      - tool: Welding
+        doAfter: 4
+    - to: batteryin
+      conditions:
+      - !type:SolutionEmpty
+        solution: container
+      completed:
+      - !type:EmptyContainer
+        containers:
+        - board
+      steps:
+      - tool: Prying
+        doAfter: 5
+
+  - node: liquidfillwelded
+    entity: EnergyGateAssembly
     edges:
     - to: energyGate
-      completed:
-      - !type:SnapToGrid
+      conditions:
+      - !type:EntityAnchored {}
       steps:
-      - material: MetalRod
-        amount: 4
-      - material: Silver
-        amount: 5
-        doAfter: 6
+      - tool: Pulsing #POWER IT UPPPP
+        doAfter: 8
+    - to: liquidfill
+      completed:
+      - !type:SpawnPrototype
+        prototype: SheetSteel1
+        amount: 2
+      steps:
+      - tool: Welding
+        doAfter: 5
 
   - node: energyGate
     entity: EnergyGate
+    doNotReplaceInheritingEntities: true
     edges:
-    - to: start
-      completed:
-      - !type:SpawnPrototype
-        prototype: PartRodMetal1
-        amount: 4
-      - !type:DeleteEntity
+    - to: liquidfillwelded
+      conditions:
+      - !type:EntityAnchored {}
       steps:
-      - tool: Welding
-        doAfter: 4.0
-      - tool: Cutting
-        doAfter: 2.0
+      - tool: Pulsing
+        doAfter: 20

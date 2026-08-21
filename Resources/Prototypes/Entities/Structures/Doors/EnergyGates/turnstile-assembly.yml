@@ -1,0 +1,87 @@
+- type: entity
+  id: EnergyGateSolutions
+  abstract: true
+  components: # I hate it here
+  - type: ContainerContainer
+    containers:
+      battery-container: !type:Container
+      board: !type:Container
+  - type: Solution
+    id: container
+    solution:
+      maxVol: 10
+  - type: MixableSolution
+    solution: container
+  - type: DrawableSolution
+    solution: container
+  - type: InjectableSolution
+    solution: container
+  - type: SolutionTransfer
+    maxTransferAmount: 10
+
+- type: entity
+  parent: [ StructureHealthDoorWeak, EnergyGateSolutions ]
+  id: EnergyGateAssembly
+  name: energy gate assembly
+  description: An dissassembled gate that would prevent one-way access and prevent tailgating. If it was finished.
+  components:
+  - type: Clickable
+  - type: InteractionOutline
+  - type: Sprite
+    sprite: Structures/Doors/Misc/energy-gate.rsi
+    state: regular
+  - type: Physics
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.45,-0.45,0.45,0.45"
+        density: 85
+        mask:
+        - FullTileMask
+        layer:
+        - HumanoidBlockLayer
+  - type: Anchorable
+    delay: 2
+  - type: Pullable
+  - type: Transform
+    anchored: true
+  - type: Damageable
+    damageModifierSet: SteelMod
+  - type: RCDDeconstructable
+    cost: 6
+    delay: 12
+    fx: EffectRCDDeconstruct8
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 100
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: MetalBreak
+          params:
+            volume: -4
+  - type: Construction
+    graph: EnergyGate
+    node: assembly
+  placement:
+    mode: SnapgridCenter
+
+- type: entity
+  parent: EnergyGateAssembly
+  id: EnergyGateAssemblyFilled
+  components:
+  - type: Solution
+    solution:
+      reagents:
+      - ReagentId: Plasma
+        Quantity: 10
+  - type: Construction
+    graph: EnergyGate
+    node: liquidfillwelded
+    containers:
+    - battery-container
+    - board

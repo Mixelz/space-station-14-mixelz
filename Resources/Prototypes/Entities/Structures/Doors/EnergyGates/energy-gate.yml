@@ -140,6 +140,12 @@
         enum.PowerDeviceVisualLayers.Powered:
           True: { visible: true }
           False: { visible: false }
+  - type: ContainerContainer
+    containers:
+      battery-container: !type:Container
+  - type: ContainerFill
+    containers:
+      battery-container: [ PowerCellMedium ]
   - type: ExaminableBattery
   - type: ApcPowerReceiver
     powerLoad: 60 # x3 rate of a door, because it is literally made of energy
