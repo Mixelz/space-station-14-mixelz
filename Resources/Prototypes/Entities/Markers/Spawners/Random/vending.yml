@@ -12,51 +12,38 @@
   - type: EntityTableSpawner
     table: !type:GroupSelector
       children:
-      - id: VendingMachineChang
-      - id: VendingMachineCigs
-      - id: VendingMachineCoffee
-      - id: VendingMachineCola #Robust Sofdrinks
-      - id: VendingMachineColaBlack #Robust Sofdrinks [Black]
-      - id: VendingMachineColaRed #Space Cola
-      - id: VendingMachineDiscount
-      - id: VendingMachineDonut
-      - id: VendingMachineDrGibb
-      - id: VendingMachinePwrGame
-      - id: VendingMachineShamblersJuice
-      - id: VendingMachineSmite
-      - id: VendingMachineSnack
-      - id: VendingMachineSnackBlue
-      - id: VendingMachineSnackGreen
-      - id: VendingMachineSnackOrange
-      - id: VendingMachineSnackTeal
-      - id: VendingMachineSoda #Robust Sofdrinks [Soda]
-      - id: VendingMachineSovietSoda #Boda
-      - id: VendingMachineSpaceUp
-      - id: VendingMachineStarkist
-
-
-- type: entityTable
-  id: ClothingVendorTable
-  table: !type:GroupSelector
-    children:
-    - id: VendingMachineClothing
-      weight: 4
-    - id: VendingMachineWinter
-      weight: 4
-    - id: VendingMachinePride
-    - id: VendingMachineTheater
+      - !type:NestedSelector
+        tableId: ClothingVendorTable
+        weight: 0.5 # Still majority drinks/snacks/other, don't want to flood with clothe vends.
+      - !type:NestedSelector
+        tableId: SnackVendorTable
+      - !type:NestedSelector
+        tableId: DrinkVendorTable
+      - !type:NestedSelector
+        tableId: MiscVendorTable
+        weight: 0.25 # Lower Weight until the table is filled more (it's basically only cig vend)
 
 - type: entity
   parent: MarkerBase
-  id: RandomVendingClothing
+  id: RandomVendingOther
   name: random vending machine spawner
-  suffix: Clothing
+  suffix: Misc
   components:
   - type: Sprite
     layers:
     - state: red
     - sprite: Structures/Machines/VendingMachines/random.rsi
-      state: clothing
+      state: other
   - type: EntityTableSpawner
     table: !type:NestedSelector
-      tableId: ClothingVendorTable
+      tableId: MiscVendorTable
+
+- type: entityTable
+  id: MiscVendorTable #Future Proofing for non-food/drink/clothing vends.
+  table: !type:GroupSelector
+    children:
+    - id: VendingMachineCigs
+    - id: VendingMachineVendomat
+      weight: 0.1
+    - id: VendingMachineYouTool
+      weight: 0.1

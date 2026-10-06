@@ -10,13 +10,26 @@
     - sprite: Structures/Machines/VendingMachines/random.rsi
       state: snack
   - type: EntityTableSpawner
-    table: !type:GroupSelector
-      children:
+    table: !type:NestedSelector
+      tableId: SnackVendorTable
+
+- type: entityTable
+  id: SnackVendorTable
+  table: !type:GroupSelector
+    children:
+      - !type:NestedSelector
+        tableId: GetmoreVendorTable
+        weight: 5
       - id: VendingMachineDiscount
+      - id: VendingMachineChang
+      - id: VendingMachineDonut
+
+- type: entityTable
+  id: GetmoreVendorTable
+  table: !type:GroupSelector
+    children:
       - id: VendingMachineSnack
       - id: VendingMachineSnackBlue
       - id: VendingMachineSnackGreen
       - id: VendingMachineSnackOrange
       - id: VendingMachineSnackTeal
-      - id: VendingMachineChang
-      - id: VendingMachineDonut
